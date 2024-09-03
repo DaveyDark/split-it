@@ -17,6 +17,8 @@ const List<Color> themePumice = [
   Color(0xff878E87),
 ];
 
+// const themeAccent = Color(0xFFF6C361);
+
 ThemeData darkTheme = ThemeData(
   colorScheme: ColorScheme.dark(
     surface: themeSpace[3],
@@ -24,21 +26,30 @@ ThemeData darkTheme = ThemeData(
     secondary: themeSpace[0],
     tertiary: themeSpace[1],
     inversePrimary: themeSpace[2],
-    inverseSurface: themePumice[1],
+    inverseSurface: themePumice[0],
     onSecondary: themePumice[0],
+    onTertiary: themePumice[0],
+    surfaceContainer: themeSpace[0],
+    surfaceTint: themeSpace[2],
+    shadow: Colors.transparent,
   ),
   textTheme: ThemeData().textTheme.apply(bodyColor: themePumice[0]),
 );
 
 ThemeData lightTheme = ThemeData(
   colorScheme: ColorScheme.light(
-    surface: themePumice[0],
-    primary: themeSpace[2],
-    secondary: themeSpace[2],
+    surface: themePumice[1],
+    primary: themeSpace[1],
+    secondary: themePumice[0],
     tertiary: themeSpace[0],
     inversePrimary: themePumice[0],
     inverseSurface: themeSpace[1],
     onSecondary: themePumice[0],
+    onTertiary: themePumice[0],
+    surfaceContainer: themeSpace[0],
+    surfaceTint: themePumice[0],
+    surfaceBright: themePumice[0],
+    shadow: themePumice[1],
   ),
-  textTheme: ThemeData().textTheme.apply(bodyColor: themePumice[0]),
+  textTheme: ThemeData().textTheme.apply(bodyColor: themeSpace[2]),
 );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:split_it/utils/theme.dart';
 import 'package:split_it/widgets/modal_controls.dart';
 
 import '../services/database.dart';
@@ -11,26 +12,80 @@ class AddSplit extends StatefulWidget {
 }
 
 class _AddSplitState extends State<AddSplit> {
-  final List<String> _contributors = ["Me"];
+  final List<String> _contributors = [];
   final TextEditingController _contributorController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
+  String _titleFeedback = '';
+  String _contributorsFeedback = '';
 
   void _addContributor() {
-    if (_contributorController.text.isEmpty) return;
-    if (_contributors.contains(_contributorController.text)) return;
+    if (_contributorController.text.isEmpty) {
+      setState(() {
+        _contributorsFeedback = 'Please enter a name';
+      });
+      return;
+    } else if (_contributorController.text.length > 20) {
+      setState(() {
+        _contributorsFeedback = 'Name must be less than 20 characters';
+      });
+      return;
+    } else if (_contributors.contains(_contributorController.text)) {
+      setState(() {
+        _contributorsFeedback = 'Contributor already exists';
+      });
+      return;
+    } else {
+      setState(() {
+        _contributorsFeedback = '';
+      });
+    }
     setState(() {
       _contributors.add(_contributorController.text);
       _contributorController.clear();
     });
   }
 
-  void createSplit() async {
-    if (_titleController.text.isEmpty || _contributors.length < 2) return;
-    await DB()
-        .createSplit(_titleController.text, _contributors)
-        .whenComplete(() {
-      Navigator.of(context).pop();
-    });
+  void createSplit() {
+    if (_titleController.text.isEmpty) {
+      setState(() {
+        _titleFeedback = 'Please enter a title';
+      });
+      return;
+    } else if (_titleController.text.length < 3) {
+      setState(() {
+        _titleFeedback = 'Title must be at least 3 characters';
+      });
+      return;
+    } else if (_titleController.text.length > 40) {
+      setState(() {
+        _titleFeedback = 'Title must be less than 50 characters';
+      });
+      return;
+    } else {
+      setState(() {
+        _titleFeedback = '';
+      });
+    }
+    if (_contributors.length < 2) {
+      setState(() {
+        _contributorsFeedback = 'At least 2 contributors are required';
+      });
+      return;
+    } else if (_contributors.length > 10) {
+      setState(() {
+        _contributorsFeedback = 'Maximum of 10 contributors';
+      });
+      return;
+    } else {
+      setState(() {
+        _contributorsFeedback = '';
+      });
+    }
+    DB().createSplit(_titleController.text, _contributors).then(
+      (_) {
+        if (mounted) Navigator.of(context).pop();
+      },
+    );
   }
 
   @override
@@ -50,8 +105,10 @@ class _AddSplitState extends State<AddSplit> {
                 _title(),
                 const SizedBox(height: 20),
                 _titleInput(),
+                _feedback(_titleFeedback),
                 const SizedBox(height: 20),
                 _contributorsInput(),
+                _feedback(_contributorsFeedback),
                 const SizedBox(height: 10),
                 _contributorsList()
               ],
@@ -59,6 +116,19 @@ class _AddSplitState extends State<AddSplit> {
           ),
         ),
       ],
+    );
+  }
+
+  Padding _feedback(String value) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        value,
+        style: const TextStyle(
+          color: themeRed,
+          fontStyle: FontStyle.italic,
+        ),
+      ),
     );
   }
 
@@ -90,16 +160,14 @@ class _AddSplitState extends State<AddSplit> {
       itemBuilder: (context, index) {
         return ListTile(
           title: Text(_contributors[index]),
-          trailing: index != 0
-              ? IconButton(
-                  icon: const Icon(Icons.remove),
-                  onPressed: () {
-                    setState(() {
-                      _contributors.removeAt(index);
-                    });
-                  },
-                )
-              : null,
+          trailing: IconButton(
+            icon: const Icon(Icons.remove),
+            onPressed: () {
+              setState(() {
+                _contributors.removeAt(index);
+              });
+            },
+          ),
         );
       },
     );

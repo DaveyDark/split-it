@@ -43,11 +43,19 @@ class DB {
   }
 
   Future<List<Split>> getActiveSplits() async {
-    return await isar.splits.filter().settledEqualTo(false).findAll();
+    return await isar.splits
+        .filter()
+        .settledEqualTo(false)
+        .sortByCreatedDesc()
+        .findAll();
   }
 
   Future<List<Split>> getSettledSplits() async {
-    return await isar.splits.filter().settledEqualTo(true).findAll();
+    return await isar.splits
+        .filter()
+        .settledEqualTo(true)
+        .sortByCreatedDesc()
+        .findAll();
   }
 
   Future<Split?> getSplit(int id) async {

@@ -20,11 +20,17 @@ class _AddTransactionState extends State<AddTransaction> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   late String _selectedContributor;
+  String feedback = '';
 
   void _addTransaction() async {
-    if (_titleController.text.isEmpty || _amountController.text.isEmpty) {
+    if (_titleController.text.isEmpty) {
+      feedback = 'Please enter a description';
+      return;
+    } else if (_amountController.text.isEmpty) {
+      feedback = 'Please enter an amount';
       return;
     }
+    feedback = '';
     await DB()
         .createTransaction(
       widget.split.id,
@@ -32,9 +38,11 @@ class _AddTransactionState extends State<AddTransaction> {
       double.parse(_amountController.text),
       _selectedContributor,
     )
-        .whenComplete(() {
-      Navigator.of(context).pop();
-    });
+        .then(
+      (_) {
+        if (mounted) Navigator.of(context).pop();
+      },
+    );
   }
 
   @override
@@ -66,7 +74,15 @@ class _AddTransactionState extends State<AddTransaction> {
                     Expanded(child: _amountInput()),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
+                Text(
+                  feedback,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                const SizedBox(height: 10),
                 _titleInput(),
               ],
             ),
@@ -105,11 +121,14 @@ class _AddTransactionState extends State<AddTransaction> {
           _selectedContributor = selected!;
         });
       },
+      label: const Text('Contributor'),
       dropdownMenuEntries: widget.split.contributors
-          .map((String contributor) => DropdownMenuEntry<String>(
-                value: contributor,
-                label: contributor,
-              ))
+          .map(
+            (String contributor) => DropdownMenuEntry<String>(
+              value: contributor,
+              label: contributor,
+            ),
+          )
           .toList(),
     );
   }

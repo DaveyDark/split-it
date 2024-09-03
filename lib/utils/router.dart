@@ -9,14 +9,14 @@ GoRouter router = GoRouter(
       builder: (ctx, state) => const Splits(),
     ),
     GoRoute(
-      path: '/split/edit/:id',
+      path: '/splits/edit/:id',
       builder: (ctx, state) => SplitDetail(
         id: state.pathParameters['id']!,
         editable: true,
       ),
     ),
     GoRoute(
-      path: '/split/view/:id',
+      path: '/splits/view/:id',
       builder: (ctx, state) => SplitDetail(
         id: state.pathParameters['id']!,
         editable: false,

@@ -47,7 +47,7 @@ class _SplitsHistoryState extends State<SplitsHistory> {
           itemBuilder: (context, index) {
             return SplitCard(
               splitId: splits![index].id,
-              onTapUrl: "/split/view/${splits![index].id}",
+              onTapUrl: "/splits/view/${splits![index].id}",
             );
           },
         ),

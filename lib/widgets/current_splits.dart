@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:split_it/services/database.dart';
-import 'package:split_it/widgets/add_split.dart';
 import 'package:split_it/widgets/split_card.dart';
 
 class CurrentSplits extends StatefulWidget {
@@ -50,11 +49,22 @@ class _CurrentSplitsState extends State<CurrentSplits> {
     return _PageWrapper(
       child: ListView.separated(
         itemCount: splits!.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 6),
+        separatorBuilder: (context, index) => const SizedBox(height: 10),
         itemBuilder: (context, index) {
+          if (index == 0) {
+            return Column(
+              children: [
+                const SizedBox(height: 10),
+                SplitCard(
+                  splitId: splits![index].id,
+                  onTapUrl: "/splits/edit/${splits![index].id}",
+                ),
+              ],
+            );
+          }
           return SplitCard(
             splitId: splits![index].id,
-            onTapUrl: "/split/edit/${splits![index].id}",
+            onTapUrl: "/splits/edit/${splits![index].id}",
           );
         },
         padding: const EdgeInsets.only(

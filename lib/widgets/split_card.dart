@@ -20,10 +20,12 @@ class _SplitCardState extends State<SplitCard> {
   void _fetchSplit() async {
     final s = await DB().getSplit(widget.splitId);
     final t = await DB().getTotal(widget.splitId);
-    setState(() {
-      split = s;
-      total = t;
-    });
+    if (mounted) {
+      setState(() {
+        split = s;
+        total = t;
+      });
+    }
   }
 
   @override
@@ -56,16 +58,33 @@ class _SplitCardState extends State<SplitCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              splitDate(context, day, month, year),
-              const SizedBox(height: 10),
-              Text(
-                split!.title,
-                style: const TextStyle(fontSize: 26),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Text(
+                      split!.title,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  splitDate(context, day, month, year),
+                ],
               ),
               const SizedBox(height: 10),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: splitParams(context, dividedToal, total),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0,
+                  vertical: 5,
+                ),
+                child: splitParams(
+                  context,
+                  dividedToal,
+                  total,
+                ),
               ),
             ],
           ),
@@ -77,50 +96,105 @@ class _SplitCardState extends State<SplitCard> {
   Row splitParams(BuildContext context, double dividedToal, double total) {
     return Row(
       children: [
-        splitStat(context, Icons.receipt_long, total.toStringAsFixed(2)),
-        const Spacer(),
         splitStat(
-            context, Icons.currency_rupee, dividedToal.toStringAsFixed(2)),
-        Expanded(
-          child: VerticalDivider(
-            color: Colors.white,
-            width: 2,
-            thickness: 2,
-          ),
+          context: context,
+          icon: Icons.assignment_outlined,
+          value: total.toStringAsFixed(2),
         ),
-        splitStat(context, Icons.people, split!.contributors.length.toString()),
+        const SizedBox(width: 10),
+        splitStat(
+          context: context,
+          icon: Icons.payments_outlined,
+          value: dividedToal.toStringAsFixed(2),
+        ),
+        const SizedBox(width: 10),
+        splitStat(
+          context: context,
+          icon: Icons.people_outline,
+          value: split!.contributors.length.toString(),
+        ),
       ],
     );
   }
 
-  Row splitStat(BuildContext context, IconData icon, String value) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          color: Theme.of(context).colorScheme.onSecondary,
-          size: 28,
+  Widget borderBox(BuildContext context, Widget child) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 5,
+        vertical: 10,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
         ),
-        const SizedBox(width: 6),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 18),
+        color: Theme.of(context).colorScheme.secondary,
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.shadow,
+            blurRadius: 3,
+            spreadRadius: 0.5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  Widget splitStat({
+    required BuildContext context,
+    required IconData icon,
+    required String value,
+  }) {
+    return Expanded(
+      child: borderBox(
+        context,
+        Row(
+          children: [
+            const Spacer(),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 24,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+          ],
         ),
-      ],
+      ),
     );
   }
 
   Container splitDate(BuildContext context, int day, int month, int year) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withOpacity(0.2),
+        color: Theme.of(context).colorScheme.surface.withOpacity(0.25),
         borderRadius: BorderRadius.circular(200),
       ),
       padding: const EdgeInsets.symmetric(
-        vertical: 4,
-        horizontal: 8,
+        vertical: 6,
+        horizontal: 12,
       ),
-      child: Text("$day/$month/$year"),
+      child: Text(
+        "$day/$month/$year",
+        style: const TextStyle(
+          fontSize: 16,
+        ),
+      ),
     );
   }
 }

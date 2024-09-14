@@ -47,13 +47,10 @@ class Navbar extends StatelessWidget {
           selectedIndex: currentIndex,
           backgroundColor: Colors.transparent,
           destinations: [
-            FloatingActionButton(
+            IconButton(
               onPressed: () => onItemTapped(0),
-              shape: const CircleBorder(),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
               tooltip: "Current Splits",
-              child: Icon(
+              icon: Icon(
                 Icons.receipt,
                 size: currentIndex == 0 ? 35 : 30,
                 color: currentIndex == 0

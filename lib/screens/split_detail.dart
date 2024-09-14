@@ -30,6 +30,9 @@ class _SplitDetailState extends State<SplitDetail> {
   Future<void> _getSplit() async {
     final id = int.parse(widget.id);
     final s = await DB().getSplit(id);
+    if (s == null) {
+      return;
+    }
     final t = await DB().getTotal(id);
     final contris = await DB().getContributions(id);
     final bal = await DB().getBalance(id);
@@ -57,6 +60,11 @@ class _SplitDetailState extends State<SplitDetail> {
 
   @override
   Widget build(BuildContext context) {
+    if (split == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -65,6 +73,38 @@ class _SplitDetailState extends State<SplitDetail> {
             color: Theme.of(context).colorScheme.onTertiary,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () => {
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text("Delete split"),
+                  content: const Text(
+                    "Are you sure you want to delete this split?",
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      child: const Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () => {
+                        DB().deleteSplit(int.parse(widget.id)),
+                        Navigator.of(context).pop(),
+                        Navigator.of(context).pop(),
+                      },
+                      child: const Text("Delete"),
+                    ),
+                  ],
+                ),
+              ),
+            },
+            icon: const Icon(
+              Icons.delete_outlined,
+            ),
+          ),
+        ],
         elevation: 0.0,
         scrolledUnderElevation: 0.0,
         iconTheme: IconThemeData(
@@ -161,7 +201,7 @@ class _DetailsState extends State<_Details> {
           ),
         ),
         DefaultTabController(
-          length: 2,
+          length: widget.editable ? 2 : 1,
           child: Expanded(
             child: Column(
               children: [
@@ -406,54 +446,16 @@ class _DetailsState extends State<_Details> {
       separatorBuilder: (ctx, i) => const SizedBox(
         height: 10,
       ),
-      itemCount: widget.settlements.length + 1,
-      itemBuilder: (ctx, idx) {
-        if (idx == 0) {
-          return const Column(
-            children: [
-              SizedBox(height: 15),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      "From",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      "Amount",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      "To",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          );
-        }
-        final i = idx - 1;
+      itemCount: widget.settlements.length,
+      padding: const EdgeInsets.only(
+        top: 10,
+        bottom: 80,
+      ),
+      itemBuilder: (ctx, i) {
         final settlement = widget.settlements[i];
         return Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondary,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(20),
           ),
           padding: const EdgeInsets.all(2),
@@ -484,13 +486,14 @@ class _DetailsState extends State<_Details> {
               child: Container(
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                 ),
                 child: Text(
                   "₹ ${settlement.amount.toStringAsFixed(2)}",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onSecondary,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -524,12 +527,12 @@ class _DetailsState extends State<_Details> {
     final transactionList = widget.split!.transactions.toList();
     final contributors = widget.split!.contributors;
     return ListView.builder(
-        itemCount: widget.split!.transactions.length + 1,
-        itemBuilder: (ctx, i) {
-          if (i == 0) {
-            return const SizedBox(height: 10);
-          }
-          final index = i - 1;
+        itemCount: widget.split!.transactions.length,
+        padding: const EdgeInsets.only(
+          top: 10,
+          bottom: 80,
+        ),
+        itemBuilder: (ctx, index) {
           return Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.secondary,

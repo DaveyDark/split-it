@@ -63,7 +63,7 @@ class DB {
   }
 
   Stream<void> watchSplits() {
-    return DB().isar.splits.watchLazy();
+    return DB().isar.splits.watchLazy(fireImmediately: true);
   }
 
   Stream<void> watchSplit(int id) {
@@ -151,6 +151,17 @@ class DB {
       await split!.transactions.save();
       split.settled = true;
       await isar.splits.put(split);
+    });
+  }
+
+  Future<void> deleteSplit(int splitId) async {
+    final split = await isar.splits.get(splitId);
+    final transactions = split!.transactions.toList();
+    isar.writeTxn(() async {
+      await isar.splits.delete(splitId);
+      for (final transaction in transactions) {
+        await isar.transactions.delete(transaction.id);
+      }
     });
   }
 }

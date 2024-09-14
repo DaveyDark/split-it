@@ -19,6 +19,9 @@ class _SplitCardState extends State<SplitCard> {
 
   void _fetchSplit() async {
     final s = await DB().getSplit(widget.splitId);
+    if (s == null) {
+      return;
+    }
     final t = await DB().getTotal(widget.splitId);
     if (mounted) {
       setState(() {

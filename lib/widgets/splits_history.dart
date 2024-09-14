@@ -15,8 +15,10 @@ class _SplitsHistoryState extends State<SplitsHistory> {
   List? splits;
 
   Future<void> _fetchSplits() async {
+    if (!mounted) return;
     final activeSplits = await DB().getSettledSplits();
     setState(() {
+      splits?.clear();
       splits = activeSplits;
     });
   }
@@ -25,6 +27,10 @@ class _SplitsHistoryState extends State<SplitsHistory> {
   void initState() {
     super.initState();
     _fetchSplits();
+
+    DB().watchSplits().listen((_) {
+      _fetchSplits();
+    });
   }
 
   @override
@@ -46,6 +52,7 @@ class _SplitsHistoryState extends State<SplitsHistory> {
           separatorBuilder: (context, index) => const SizedBox(height: 4),
           itemBuilder: (context, index) {
             return SplitCard(
+              key: ValueKey(splits![index].id),
               splitId: splits![index].id,
               onTapUrl: "/splits/view/${splits![index].id}",
             );

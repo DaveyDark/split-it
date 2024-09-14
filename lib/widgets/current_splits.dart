@@ -15,8 +15,10 @@ class _CurrentSplitsState extends State<CurrentSplits> {
   List? splits;
 
   Future<void> _fetchSplits() async {
+    if (!mounted) return;
     final activeSplits = await DB().getActiveSplits();
     setState(() {
+      splits?.clear();
       splits = activeSplits;
     });
   }
@@ -51,18 +53,8 @@ class _CurrentSplitsState extends State<CurrentSplits> {
         itemCount: splits!.length,
         separatorBuilder: (context, index) => const SizedBox(height: 10),
         itemBuilder: (context, index) {
-          if (index == 0) {
-            return Column(
-              children: [
-                const SizedBox(height: 10),
-                SplitCard(
-                  splitId: splits![index].id,
-                  onTapUrl: "/splits/edit/${splits![index].id}",
-                ),
-              ],
-            );
-          }
           return SplitCard(
+            key: ValueKey(splits![index].id),
             splitId: splits![index].id,
             onTapUrl: "/splits/edit/${splits![index].id}",
           );

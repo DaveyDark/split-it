@@ -20,6 +20,7 @@ dependencies:
   shared_preferences: ^2.3.2
   flutter_riverpod: ^2.5.1
   riverpod_annotation: ^2.3.5
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -49,3 +50,10 @@ flutter_native_splash:
     image_dark: assets/splitit_splash_dark_a12.png
     color_dark: "#20363C"
   fullscreen: true
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/splitit_launcher_icon.png"
+  adaptive_icon_background: "#20363C"
+  adaptive_icon_foreground: "assets/splitit_launcher_icon_adaptive.png"

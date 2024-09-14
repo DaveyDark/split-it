@@ -1,8 +1,8 @@
 # Split It
 
-<img title="" src="./assets/splitit_splash_dark.png" alt="" height="300" data-align="center">
+<img title="" src="./assets/splitit_splash_dark.png" alt="" height="300">
 
-<img title="" src="./assets/splitit_banner.png" alt="" height="150" data-align="center">
+<img title="" src="./assets/splitit_banner.png" alt="" height="150">
 
 ## Table of Contents
 
@@ -63,14 +63,18 @@ Technologies Used
 
 ## Screenshots
 
+<div>
 <img src="./assets/ss9.png" height=300 />
 <img src="./assets/ss1.png" height=300 />
 <img src="./assets/ss2.png" height=300 />
 <img src="./assets/ss4.png" height=300 />
+</div>
+<div>
 <img src="./assets/ss10.png" height=300 />
 <img src="./assets/ss5.png" height=300 />
 <img src="./assets/ss6.png" height=300 />
-<img src="./assets/ss7.png" height=300 />
+<img src="./assets/ss7.png" height=300 /> 
+</div>
 
 ## Contributing
 
@@ -78,4 +82,4 @@ Contributions are welcome! If you find any bugs or want to contribute new featur
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for more details.e
+This project is licensed under the MIT License. See the LICENSE file for more details.
